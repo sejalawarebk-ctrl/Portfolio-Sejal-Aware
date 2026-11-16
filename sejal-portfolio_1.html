@@ -1250,6 +1250,7 @@ html.rz-lock{overflow:hidden}
         </select>
       </div>
       <div class="fg"><label for="f-msg">message</label><textarea id="f-msg" name="message" rows="4" placeholder="Tell me about your idea, goals and timeline..."></textarea></div>
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off"/>
       <button type="submit" class="submit">Send message →</button>
       <div class="form-msg" id="form-msg"></div>
     </form>
@@ -1442,13 +1443,41 @@ const mm=$('#mobile-menu');
 $('#hamburger').addEventListener('click',()=>mm.classList.toggle('open'));
 $$('a',mm).forEach(a=>a.addEventListener('click',()=>mm.classList.remove('open')));
 
-/* ---------- contact form (Formspree) ---------- */
-const form=$('#contact-form'),msg=$('#form-msg');
+/* ---------- contact form + visit alerts (Web3Forms) ---------- */
+const W3F_URL='https://api.web3forms.com/submit',W3F_KEY='64dce34a-46eb-4ec9-a983-312ea1628741';
+const form=$('#contact-form'),msg=$('#form-msg'),btn=$('.submit',form);
 form.addEventListener('submit',e=>{e.preventDefault();
   const show=t=>{msg.textContent=t;msg.style.display='block';setTimeout(()=>msg.style.display='none',6000);};
-  fetch('https://formspree.io/f/xjgdlagb',{method:'POST',headers:{Accept:'application/json'},body:new FormData(form)})
-   .then(r=>{if(r.ok){show('✓ Message sent! I\'ll get back to you within 24 hours.');form.reset();}else show('Something went wrong. Please email me directly.');})
-   .catch(()=>show('Network error, message not sent. Please email me directly.'));});
+  const fd=new FormData(form),name=fd.get('name')||'Someone';
+  fd.append('access_key',W3F_KEY);
+  fd.append('subject','📩 New portfolio enquiry from '+name);
+  fd.append('from_name','Portfolio Enquiry');
+  btn.disabled=true;btn.textContent='Sending…';
+  fetch(W3F_URL,{method:'POST',headers:{Accept:'application/json'},body:fd})
+   .then(r=>r.json())
+   .then(d=>{if(d.success){show('✓ Message sent! I\'ll get back to you within 24 hours.');form.reset();}else show('Something went wrong. Please email me directly.');})
+   .catch(()=>show('Network error, message not sent. Please email me directly.'))
+   .finally(()=>{btn.disabled=false;btn.textContent='Send message →';});});
+
+/* visit alert: max one email per visitor per day; open the site once with ?me to stop alerts for your own browser */
+(()=>{try{
+  const ls=window.localStorage,q=new URLSearchParams(location.search);
+  if(q.has('me')){ls.setItem('pf_owner','1');return;}
+  if(ls.getItem('pf_owner')||navigator.webdriver||/bot|crawl|spider|preview|headless/i.test(navigator.userAgent))return;
+  const today=new Date().toISOString().slice(0,10);
+  if(ls.getItem('pf_visit')===today)return;
+  ls.setItem('pf_visit',today);
+  const ua=navigator.userAgent,
+    device=/Mobi|Android|iPhone/i.test(ua)?'📱 Mobile':/iPad|Tablet/i.test(ua)?'Tablet':'💻 Desktop',
+    os=/Android/i.test(ua)?'Android':/iPhone|iPad/i.test(ua)?'iOS':/Windows/i.test(ua)?'Windows':/Mac/i.test(ua)?'macOS':/Linux/i.test(ua)?'Linux':'Other',
+    br=/Edg\//.test(ua)?'Edge':/OPR\//.test(ua)?'Opera':/Chrome\//.test(ua)?'Chrome':/Firefox\//.test(ua)?'Firefox':/Safari\//.test(ua)?'Safari':'Other',
+    ref=document.referrer?new URL(document.referrer).hostname:'Direct / typed link',
+    when=new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'});
+  fetch(W3F_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json',Accept:'application/json'},
+    body:JSON.stringify({access_key:W3F_KEY,subject:'👀 Someone is viewing your portfolio',from_name:'Portfolio Visit Alert',
+      'Time (IST)':when,'Came from':ref,'Page':location.pathname+location.hash,'Device':device+' · '+os+' · '+br,
+      'Screen':screen.width+'×'+screen.height,'Visitor timezone':Intl.DateTimeFormat().resolvedOptions().timeZone||'—','Language':navigator.language})}).catch(()=>{});
+}catch(_){}})();
 })();
 </script>
 <script src="assets/resume.js"></script>
