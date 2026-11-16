@@ -391,6 +391,8 @@ body[data-world=lab] .ws-lab{color:#04070a}
 .registry p{font-family:var(--mono);font-size:.82rem;color:var(--l-ink2)}
 .registry p b{color:var(--l-green)}
 .registry .links{padding-top:0;margin-top:0}
+.sys-demo{margin-top:1.4rem}
+.sys-demo video{display:block;width:100%;height:clamp(240px,42vw,560px);object-fit:contain;background:#000}
 .feature-grid{display:grid;grid-template-columns:1.15fr .85fr}
 .screen{background:#000;display:flex;flex-direction:column;border-right:1px solid var(--l-border)}
 .screen video{width:100%;height:clamp(300px,42vw,560px);object-fit:contain;background:#000}
@@ -686,7 +688,7 @@ html.rz-lock{overflow:hidden}
   <div class="h-center">
     <div class="avatar-wrap">
       <svg class="ring" viewBox="0 0 200 200" aria-hidden="true"><defs><path id="circ" d="M100,100 m-82,0 a82,82 0 1,1 164,0 a82,82 0 1,1 -164,0"/></defs><text><textPath href="#circ" textLength="508" lengthAdjust="spacing">CONTENT CREATOR ✦ MIS EXECUTIVE ✦ DATA ANALYST ✦ DEVELOPER ✦</textPath></text></svg>
-      <img class="avatar" src="assets/profilephtot.jpg" alt="Sejal Kailas Aware" onerror="this.style.visibility='hidden'"/>
+      <img class="avatar" src="assets/profile-photo.jpg" alt="Sejal Kailas Aware" onerror="this.style.visibility='hidden'"/>
     </div>
     <h1 class="h-name">Sejal Kailas Aware</h1>
   </div>
@@ -713,7 +715,7 @@ html.rz-lock{overflow:hidden}
     <!-- profile: personal info + résumé downloads (the résumé header reads the data-p fields) -->
     <div class="profile" id="profile" data-rv="up">
       <div class="pf-id">
-        <img class="pf-photo" src="assets/profilephtot.jpg" alt="Sejal Kailas Aware" onerror="this.style.visibility='hidden'"/>
+        <img class="pf-photo" src="assets/profile-photo.jpg" alt="Sejal Kailas Aware" onerror="this.style.visibility='hidden'"/>
         <div>
           <span class="pf-k">Profile · 2026</span>
           <h3 data-p="name">Sejal Kailas Aware</h3>
@@ -1062,6 +1064,10 @@ html.rz-lock{overflow:hidden}
             <a class="alt" href="https://script.google.com/u/0/home/projects/1RQ1XWn-xYfMbclXfAhl8ukytCoTXG0N5clOCBhA5XD29QWSjyrLKW3c0/edit" target="_blank" rel="noopener noreferrer">&lt;/&gt; script</a>
           </div>
         </article>
+      </div>
+      <div class="win sys-demo" data-rv="scan">
+        <div class="win-bar"><i></i><i></i><i></i><span>demo · complete business management system</span></div>
+        <video controls playsinline preload="metadata" src="assets/video/management-systems.mp4"></video>
       </div>
       <div class="registry" data-rv="up">
         <p><b>systems.registry</b> · every system, link and demo I've built, tracked in one sheet</p>
