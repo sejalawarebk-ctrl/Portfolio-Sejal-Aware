@@ -87,6 +87,9 @@ body[data-world=lab] nav.top{background:rgba(4,7,10,.72);border-color:var(--l-bo
 .logo b{color:var(--s-gold);display:inline-block;margin:0 1px;animation:spin 12s linear infinite}
 .logo i{font-style:normal;color:var(--l-green);animation:blink 1s steps(1) infinite}
 .nav-links{display:flex;gap:1.6rem;list-style:none;font-size:.86rem;font-weight:500}
+.visit-count{display:inline-flex;align-items:center;gap:.4rem;margin-right:auto;margin-left:.2rem;padding:.28rem .7rem;border-radius:999px;border:1px solid currentColor;font:500 .74rem/1 var(--mono);white-space:nowrap;opacity:0;transition:opacity .4s}
+.visit-count.on{opacity:.75}.visit-count .dot{width:6px;height:6px;border-radius:50%;background:#39ff88;box-shadow:0 0 6px #39ff88}
+@media(max-width:560px){.visit-count .vc-l{display:none}}
 .nav-links a{text-decoration:none;opacity:.72;transition:opacity .2s}
 .nav-links a:hover{opacity:1}
 .world-switch{position:relative;display:flex;background:rgba(127,127,127,.16);border-radius:999px;padding:3px;flex-shrink:0}
@@ -632,6 +635,7 @@ html.rz-lock{overflow:hidden}
 <!-- ================= NAV ================= -->
 <nav class="top" id="nav">
   <a href="#home" class="logo">sejal<b>✦</b>aware<i>_</i></a>
+  <span class="visit-count" id="visit-count" title="Total portfolio visitors"><span class="dot"></span><b id="vc-n">—</b><span class="vc-l">visitors</span></span>
   <ul class="nav-links">
     <li><a href="#about">about</a></li>
     <li><a href="#gallery">gallery</a></li>
@@ -1464,6 +1468,18 @@ form.addEventListener('submit',e=>{e.preventDefault();
    .then(d=>{if(d.success){show('✓ Message sent! I\'ll get back to you within 24 hours.');form.reset();}else show('Something went wrong. Please email me directly.');})
    .catch(()=>show('Network error, message not sent. Please email me directly.'))
    .finally(()=>{btn.disabled=false;btn.textContent='Send message →';});});
+
+/* visitor counter (Abacus): each browser counted once; owner (?me) and bots only read */
+(()=>{const el=$('#visit-count'),n=$('#vc-n');if(!el)return;
+  let ls;try{ls=window.localStorage}catch(_){}
+  const g=k=>{try{return ls&&ls.getItem(k)}catch(_){}},st=(k,v)=>{try{ls&&ls.setItem(k,v)}catch(_){}};
+  const owner=new URLSearchParams(location.search).has('me')||g('pf_owner'),
+    bot=navigator.webdriver||/bot|crawl|spider|preview|headless/i.test(navigator.userAgent),
+    hit=!owner&&!bot&&!g('pf_counted');
+  fetch('https://abacus.jasoncameron.dev/'+(hit?'hit':'get')+'/sejal-aware-portfolio/visitors')
+   .then(r=>r.json()).then(d=>{if(typeof d.value!=='number')return;
+     if(hit)st('pf_counted','1');n.textContent=d.value.toLocaleString('en-IN');el.classList.add('on');})
+   .catch(()=>{});})();
 
 /* visit alert: max one email per visitor per day; open the site once with ?me to stop alerts for your own browser */
 (()=>{try{
